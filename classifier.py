@@ -1,19 +1,7 @@
+import tensorflow as tf
+# from tensorflow.keras import preprocessing
 
-def load_dataset(filepath):
+
+def process_vocabulary(train_sentences, test_sentences, num_words, vocubulary_path):
+    tf.keras.preprocessing.text.Tokenizer(num_words=num_words)
     pass
-
-
-def train(data):
-    pass
-
-
-def estimate(data):
-    pass
-
-
-def main():
-    pass
-
-
-if __name__ == '__main__':
-    main()
