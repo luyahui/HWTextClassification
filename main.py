@@ -37,7 +37,7 @@ def main():
     print("Model Created")
 
     # training model
-    model.fit(X, Y, batch_size=256, epochs=5, validation_split=0.2, verbos=1)
+    model.fit(X, Y, batch_size=256, epochs=1, verbose=1, validation_split=0.2)
 
     model.save('HWClassifier.h5')
 
