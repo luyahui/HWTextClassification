@@ -22,6 +22,7 @@ def get_data(filepath, header=None):
 
     return x_data, y_data, labels
 
+
 def word2vec(corpus, embed_dim, embed_path):
     """
     train word/char embedding
@@ -52,15 +53,30 @@ def read_embed(embed_path, skip_first_row=False):
     return embed
 
 
-def get_tokenizer(corpus, num_words, lower=False):
-    tokenizer = text.Tokenizer(num_words, lower=lower)
-    tokenizer.fit_on_texts(corpus)
+def get_tokenizer(corpus, num_words, tokenizer_path='tokenizer.pickle', lower=False):
+    if os.path.isfile(tokenizer_path):
+        with open(tokenizer_path, 'rb') as f:
+            tokenizer = pickle.load(f)
+    else:
+        tokenizer = text.Tokenizer(num_words, lower=lower)
+        tokenizer.fit_on_texts(corpus)
+        saved = False
+        with open(tokenizer_path, 'wb') as f:
+            try:
+                pickle.dump(tokenizer, f)
+                saved = True
+            except (OverflowError, MemoryError):
+                pass
+        if not saved:
+            os.remove(tokenizer_path)
     return tokenizer
 
 
-def encode_labels(labels):
+def encode_labels(labels, label_encoder_filepath='label_encoder.pickle'):
     encoder = LabelEncoder()
     y = encoder.fit_transform(labels)
+    with open(label_encoder_filepath, 'wb') as f:
+        pickle.dump(encoder, f)
     return np_utils.to_categorical(y)
 
 
