@@ -13,51 +13,14 @@ def get_data(filepath, header=None):
     """
     read data from file
     """
-    df = pd.read_csv(filepath, header=header, names=['label', 'words']).astype(str)
+    df = pd.read_csv(filepath, header=header, names=[
+                     'label', 'words']).astype(str)
 
-    # 4/5 of data as training set, remaining as test set
     labels = np.unique(df['label'])
-    train = df.iloc[:int(len(df) * 0.8), ]
-    test = df.iloc[int(len(df) * 0.8):, ]
+    x_data = df['words']
+    y_data = df['label']
 
-    x_train = train['words']
-    y_train = train['label']
-
-    x_test = test['words']
-    y_test = test['label']
-
-    return x_train, y_train, x_test, y_test, labels
-
-
-def split_data(original_data_filepath, split_data_filepath):
-    """
-    Preprocess the data, if not done already.
-    Return preprocessed data.
-    """
-
-    if os.path.isfile(split_data_filepath):
-        with open(split_data_filepath, 'rb') as f:
-            x_train, y_train, x_test, y_test, labels = pickle.load(f)
-    else:
-        # get the data
-        x_train, y_train, x_test, y_test, labels = get_data(
-            original_data_filepath)
-
-        # save the preprocessed data into a pickle file
-        saved = False
-        with open(split_data_filepath, 'wb') as f:
-            try:
-                pickle.dump([x_train, y_train, x_test, y_test, labels], f)
-                saved = True
-            except:
-                pass
-
-        # detele the file if data was not saved
-        if not saved:
-            os.remove(split_data_filepath)
-
-    return x_train, y_train, x_test, y_test, labels
-
+    return x_data, y_data, labels
 
 def word2vec(corpus, embed_dim, embed_path):
     """
