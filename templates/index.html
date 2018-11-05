@@ -8,7 +8,7 @@
 <body>
 	<!--  <div class="page"> -->
 	<header>
-		<h1><a href="#">Text Classification</a></h1>
+		<h1><a href="/">Text Classification</a></h1>
 	</header>
 	<div>
 		<!--    <div class="content"> -->
@@ -16,21 +16,26 @@
 		<div class="panel-heading">
 			<h1 class="text-uppercase">Tensorflow Solution</h1>
 		</div>
-
-		<form action="/check/" method="post">
+		<br>
+		<form action="/predict" method="GET">
 			<div>
 				<label for="vin">Input Words：</label>
+				<br>
+				<br>
 				<div>
 					<!-- <input class="form-control input-sm" id="words" name="words" type="textarea" placeholder="Input your words" size="80"> -->
-					<textarea name="words" id="" cols="30" rows="10" placeholder="Input words"></textarea>
+					<textarea name="words" id="" cols="40" rows="20" placeholder="Input words">{{words}}</textarea>
 				</div>
-				<button type=submit value="check">submit</button>
-			</div>
-			<div>
-				<label style="font-size:26px;color:#BCF">{{error}}</label>
+				<br>
+				<div>
+					<label style="font-size:26px">{{prediction}}</label>
+				</div>
+				<br>
+				<button type=submit value="check">Predict</button>
+				<script>
+				</script>
 			</div>
 		</form>
-
 	</div>
 </body>
 

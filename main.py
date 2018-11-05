@@ -55,11 +55,14 @@ class Classifier:
         self.model = keras.models.load_model(model_filepath)
         with open(label_encoder_filepath, 'rb') as f:
             self.encoder = pickle.load(f)
+        pass
 
     def predict_label(self, test):
+
         X_test = self.tokenizer.texts_to_sequences(test)
         X_test = sequence.pad_sequences(X_test, maxlen=self.max_seq_len)
 
+        # model = keras.models.load_model(model_filepath)
         y_test = self.model.predict(X_test, verbose=1)
         y_test = np.argmax(y_test, axis=1)
 

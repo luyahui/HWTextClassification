@@ -9,9 +9,20 @@ app = Flask(__name__)
 api = Api(app)
 classifier = Classifier()
 
+
 @app.route('/')
 def index():
     return render_template('index.html')
+
+
+@app.route('/predict')
+def predict():
+    words = request.args['words']
+    if(words != ''):
+        prediction = classifier.predict_label([words])
+        return render_template('index.html', words=words, prediction=prediction[0])
+    return render_template('index.html')
+
 
 class Predict(Resource):
     def get(self):
@@ -21,7 +32,7 @@ class Predict(Resource):
             return {'prediction': prediction[0]}
 
 
-api.add_resource(Predict, '/predict', endpoint='user')
+api.add_resource(Predict, '/api/predict', endpoint='user')
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=9000, debug=app.debug)
+    app.run(host='0.0.0.0', port=9000, debug=False, threaded=False)
