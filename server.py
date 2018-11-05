@@ -3,11 +3,11 @@ import re
 from flask import Flask, render_template, request, send_from_directory
 from flask_restful import Resource, Api
 from flask_bootstrap import Bootstrap
-from main import predict_label
+from main import Classifier
 
 app = Flask(__name__)
 api = Api(app)
-
+classifier = Classifier()
 
 @app.route('/')
 def index():
@@ -17,7 +17,7 @@ class Predict(Resource):
     def get(self):
         words = request.args['words']
         if(words != ''):
-            prediction = predict_label([words])
+            prediction = classifier.predict_label([words])
             return {'prediction': prediction[0]}
 
 

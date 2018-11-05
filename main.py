@@ -6,6 +6,11 @@ from classifier import *
 import keras
 
 
+tokenizer_filepath = 'model_files/tokenizer.pickle'
+label_encoder_filepath = 'model_files/label_encoder.pickle'
+model_filepath = 'model_files/hw_classifier.h5'
+
+
 def main():
     x_data, y_data, labels = get_data('shuffled-full-set-hashed.csv')
 
@@ -21,13 +26,12 @@ def main():
     max_seq_len = 1000
 
     # convert words to sequence
-    tokenizer_filepath = 'tokenizer.pickle'
     tokenizer = get_tokenizer(corpus, max_features, tokenizer_filepath)
     X = tokenizer.texts_to_sequences(corpus)
     X = sequence.pad_sequences(X, maxlen=max_seq_len)
 
     # encode labels
-    Y = encode_labels(y_data)
+    Y = encode_labels(y_data, label_encoder_filepath=label_encoder_filepath)
 
     # create embed matrix
     embed_matrix = get_embed_matrix(
@@ -40,26 +44,27 @@ def main():
 
     # training model
     model.fit(X, Y, batch_size=256, epochs=5, verbose=1, validation_split=0.2)
-    model.save('hw_classifier.h5')
+    model.save(model_filepath)
 
-def predict_label(test):
-    tokenizer_filepath = 'tokenizer.pickle'
-    max_seq_len = 1000
-    with open(tokenizer_filepath, 'rb') as f:
-        tokenizer = pickle.load(f)
-    X_test = tokenizer.texts_to_sequences(test)
-    X_test = sequence.pad_sequences(X_test, maxlen=max_seq_len)
 
-    model_filepath = 'hw_classifier.h5'
-    classifier = keras.models.load_model(model_filepath)
-    y_test = classifier.predict(X_test, verbose=1)
-    y_test = np.argmax(y_test, axis = 1)
+class Classifier:
+    def __init__(self, *args, **kwargs):
+        self.max_seq_len = 1000
+        with open(tokenizer_filepath, 'rb') as f:
+            self.tokenizer = pickle.load(f)
+        self.model = keras.models.load_model(model_filepath)
+        with open(label_encoder_filepath, 'rb') as f:
+            self.encoder = pickle.load(f)
 
-    label_encoder_filepath = 'label_encoder.pickle'
-    with open(label_encoder_filepath, 'rb') as f:
-        encoder = pickle.load(f)
-    label = list(encoder.inverse_transform(y_test))
-    return label
+    def predict_label(self, test):
+        X_test = self.tokenizer.texts_to_sequences(test)
+        X_test = sequence.pad_sequences(X_test, maxlen=self.max_seq_len)
+
+        y_test = self.model.predict(X_test, verbose=1)
+        y_test = np.argmax(y_test, axis=1)
+
+        labels = list(self.encoder.inverse_transform(y_test))
+        return labels
 
 
 if __name__ == '__main__':
